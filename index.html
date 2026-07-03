@@ -350,6 +350,20 @@
   .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease, transform .7s ease;}
   .reveal.visible{opacity:1;transform:none;}
 
+  /* back to top */
+  .back-to-top{
+    position:fixed;right:24px;bottom:24px;z-index:50;
+    width:46px;height:46px;border-radius:50%;border:none;
+    background:var(--accent-dark);color:#fff;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 14px 30px -10px rgba(0,0,0,.45);
+    opacity:0;transform:translateY(12px);pointer-events:none;
+    transition:opacity .3s ease, transform .3s ease, background 1s ease;
+  }
+  .back-to-top.visible{opacity:1;transform:none;pointer-events:auto;}
+  .back-to-top:hover{background:var(--accent);}
+  .back-to-top svg{width:20px;height:20px;}
+
   .tour-content{display:none;}
   .tour-content.active{display:block;}
 
@@ -706,6 +720,10 @@
   </div>
 </div>
 
+<button id="backToTop" class="back-to-top" aria-label="Lên đầu trang" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+
 <script>
   const TOUR_LABELS = {pq:'Phú Quý (3N2D)', nv:'Ninh Vân (2N1D)'};
 
@@ -725,6 +743,11 @@
     entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); } });
   }, {threshold:0.12});
   document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  const backToTop = document.getElementById('backToTop');
+  window.addEventListener('scroll', () => {
+    backToTop.classList.toggle('visible', window.scrollY > 600);
+  });
 </script>
 </body>
 </html>
