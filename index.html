@@ -152,6 +152,28 @@
   .ticket.active::before, .ticket.active::after{background:var(--accent-warm);}
   .ticket:not(.active):hover{transform:translateY(-3px) scale(1.0);}
 
+  /* RSVP / submit bar */
+  .rsvp-card{
+    margin:26px auto 0;
+    max-width:520px;
+    background:var(--cream);
+    color:var(--ink);
+    border-radius:14px;
+    padding:16px 20px;
+    box-shadow:0 24px 50px -22px rgba(0,0,0,.5);
+    display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;
+  }
+  .rsvp-tour{font-size:13.5px;color:var(--ink-soft);}
+  .rsvp-tour b{color:var(--accent-dark);}
+  .rsvp-btn{
+    display:inline-block;text-decoration:none;
+    font-family:var(--font-mono);font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;
+    background:var(--accent-warm);color:#fff;border:none;border-radius:10px;
+    padding:11px 20px;cursor:pointer;font-weight:600;white-space:nowrap;
+    transition:filter .2s ease;
+  }
+  .rsvp-btn:hover{filter:brightness(1.08);}
+
   /* wave divider */
   .wave-shim{position:relative;height:70px;margin-top:-2px;}
   .wave-shim svg{position:absolute;bottom:0;left:0;width:200%;height:100%;animation:driftWave 18s linear infinite;}
@@ -357,6 +379,11 @@
         </div>
         <div class="ticket-stub">BOARDING</div>
       </div>
+    </div>
+
+    <div class="rsvp-card reveal">
+      <span class="rsvp-tour">Tour đã chọn: <b id="rsvpTourName">Phú Quý (3N2D)</b></span>
+      <a id="rsvpBtn" class="rsvp-btn" href="https://docs.google.com/forms/d/e/1FAIpQLSf43l1CVpG8NI8BvL8-HJcOiGDjo8ykF1_kyIgaBeCR195Ghg/viewform?usp=pp_url&entry.398269876=Ph%C3%BA%20Qu%C3%BD%20(3N2D)" target="_blank" rel="noopener">Gửi lựa chọn</a>
     </div>
   </div>
 
@@ -655,11 +682,18 @@
 </footer>
 
 <script>
+  const TOUR_LABELS = {pq:'Phú Quý (3N2D)', nv:'Ninh Vân (2N1D)'};
+
   function selectTour(id){
     document.documentElement.setAttribute('data-theme', id);
     document.querySelectorAll('.ticket').forEach(t => t.classList.toggle('active', t.dataset.target === id));
     document.querySelectorAll('.tour-content').forEach(c => c.classList.toggle('active', c.id === id));
     window.scrollTo({top: document.querySelector('.wave-shim').getBoundingClientRect().bottom + window.scrollY - 40, behavior:'smooth'});
+
+    const label = TOUR_LABELS[id];
+    document.getElementById('rsvpTourName').textContent = label;
+    document.getElementById('rsvpBtn').href =
+      'https://docs.google.com/forms/d/e/1FAIpQLSf43l1CVpG8NI8BvL8-HJcOiGDjo8ykF1_kyIgaBeCR195Ghg/viewform?usp=pp_url&entry.398269876=' + encodeURIComponent(label);
   }
 
   const io = new IntersectionObserver((entries)=>{
