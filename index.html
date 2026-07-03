@@ -223,19 +223,21 @@
   .photo-grid{
     display:grid;
     grid-template-columns:1.5fr 1fr;
+    grid-template-rows:380px;
     gap:12px;
-    height:380px;
     margin-bottom:40px;
   }
-  .photo-grid .ph-side{display:grid;grid-template-rows:1fr 1fr;gap:12px;}
+  .photo-grid .ph-side{display:flex;flex-direction:column;gap:12px;height:100%;}
   .photo-grid img{
     width:100%;height:100%;object-fit:cover;
     border-radius:16px;box-shadow:var(--card-shadow);display:block;
   }
+  .photo-grid .ph-side img{flex:1 1 0;min-height:0;}
   @media(max-width:640px){
-    .photo-grid{grid-template-columns:1fr;height:auto;}
-    .photo-grid img{aspect-ratio:4/3;}
-    .photo-grid .ph-side{grid-template-rows:1fr 1fr;}
+    .photo-grid{grid-template-columns:1fr;grid-template-rows:none;}
+    .photo-grid img{aspect-ratio:4/3;height:auto;}
+    .photo-grid .ph-side{height:auto;}
+    .photo-grid .ph-side img{flex:none;}
   }
 
   /* ---------- SECTION GENERIC ---------- */
