@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="pq">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phú Quý ⇄ Ninh Vân — Chọn hành trình</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FAF6EC;
+    --ink:#132C34;
+    --ink-soft:#4B6169;
+    --line: rgba(19,44,52,0.14);
+    --font-display: 'Fraunces', serif;
+    --font-body: 'Inter', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+    --card-shadow: 0 18px 40px -20px rgba(19,44,52,0.35);
+  }
+  html[data-theme="pq"]{
+    --accent:#1C8C82;
+    --accent-dark:#0B3A53;
+    --accent-soft:#DCEEEA;
+    --accent-warm:#FF6F59;
+    --tint:#F2F8F7;
+  }
+  html[data-theme="nv"]{
+    --accent:#3B5D42;
+    --accent-dark:#26301F;
+    --accent-soft:#E6ECDF;
+    --accent-warm:#C1703F;
+    --tint:#F6F2E7;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--cream);
+    color:var(--ink);
+    font-family:var(--font-body);
+    -webkit-font-smoothing:antialiased;
+    transition:background .5s ease;
+    overflow-x:hidden;
+  }
+  a{color:inherit;}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 28px;}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    padding:56px 0 0;
+    overflow:hidden;
+    background:linear-gradient(180deg, var(--accent-dark) 0%, var(--accent-dark) 55%, var(--tint) 100%);
+    transition:background 1s ease;
+  }
+  .hero-inner{position:relative;z-index:2;text-align:center;color:#fff;padding-bottom:64px;}
+  .eyebrow{
+    font-family:var(--font-mono);
+    font-size:12px;
+    letter-spacing:.28em;
+    text-transform:uppercase;
+    color:rgba(255,255,255,.65);
+    margin-bottom:18px;
+  }
+  .hero h1{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:clamp(38px,7vw,74px);
+    line-height:1.02;
+    margin:0 0 10px;
+    letter-spacing:-0.01em;
+  }
+  .hero h1 em{
+    font-style:italic;
+    font-weight:300;
+    color:var(--accent-warm);
+  }
+  .hero p.sub{
+    font-size:16px;
+    color:rgba(255,255,255,.78);
+    max-width:520px;
+    margin:0 auto 40px;
+    line-height:1.6;
+  }
+
+  /* boarding-pass tab switcher */
+  .ticket-picker{
+    display:flex;
+    justify-content:center;
+    gap:22px;
+    flex-wrap:wrap;
+    position:relative;
+    z-index:3;
+  }
+  .ticket{
+    position:relative;
+    width:270px;
+    background:var(--cream);
+    color:var(--ink);
+    border-radius:14px;
+    padding:20px 22px 18px;
+    text-align:left;
+    cursor:pointer;
+    border:2px dashed transparent;
+    transform:translateY(0) scale(.98);
+    box-shadow:0 24px 50px -22px rgba(0,0,0,.55);
+    transition:transform .35s ease, box-shadow .35s ease, border-color .35s ease;
+  }
+  .ticket::before, .ticket::after{
+    content:"";
+    position:absolute;
+    width:22px;height:22px;
+    background:var(--accent-dark);
+    border-radius:50%;
+    top:50%;
+    transform:translateY(-50%);
+    transition:background 1s ease;
+  }
+  .ticket::before{left:-11px;}
+  .ticket::after{right:-11px;}
+  .ticket .perf{
+    position:absolute;
+    top:0;bottom:0;
+    right:74px;
+    border-left:2px dashed var(--line);
+  }
+  .ticket-top{display:flex;justify-content:space-between;align-items:flex-start;padding-right:80px;}
+  .ticket-route{font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;color:var(--ink-soft);text-transform:uppercase;}
+  .ticket-name{font-family:var(--font-display);font-size:26px;font-weight:600;margin:4px 0 2px;}
+  .ticket-days{font-family:var(--font-mono);font-size:12px;color:var(--ink-soft);}
+  .ticket-stub{
+    position:absolute;
+    right:0;top:0;bottom:0;
+    width:74px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    writing-mode:vertical-rl;
+    font-family:var(--font-mono);
+    font-size:11px;
+    letter-spacing:.18em;
+    color:var(--ink-soft);
+    text-transform:uppercase;
+  }
+  .ticket.active{
+    transform:translateY(-6px) scale(1.02);
+    box-shadow:0 30px 60px -18px rgba(0,0,0,.6);
+    border-color:var(--accent-warm);
+  }
+  .ticket.active .ticket-stub{color:var(--accent-warm);font-weight:600;}
+  .ticket.active::before, .ticket.active::after{background:var(--accent-warm);}
+  .ticket:not(.active):hover{transform:translateY(-3px) scale(1.0);}
+
+  /* wave divider */
+  .wave-shim{position:relative;height:70px;margin-top:-2px;}
+  .wave-shim svg{position:absolute;bottom:0;left:0;width:200%;height:100%;animation:driftWave 18s linear infinite;}
+  @keyframes driftWave{ from{transform:translateX(0);} to{transform:translateX(-50%);} }
+
+  /* ---------- STAT STRIP ---------- */
+  .stat-strip{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+    border-radius:16px;
+    overflow:hidden;
+    margin:-46px auto 64px;
+    max-width:920px;
+    position:relative;
+    z-index:4;
+    box-shadow:var(--card-shadow);
+  }
+  .stat{
+    background:#fff;
+    padding:22px 18px;
+    text-align:center;
+  }
+  .stat .icon{width:26px;height:26px;margin:0 auto 10px;color:var(--accent);}
+  .stat .val{font-family:var(--font-display);font-size:22px;font-weight:600;color:var(--accent-dark);}
+  .stat .lbl{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.06em;color:var(--ink-soft);text-transform:uppercase;margin-top:4px;}
+
+  /* ---------- SECTION GENERIC ---------- */
+  section.block{padding:10px 0 70px;}
+  .section-head{display:flex;align-items:baseline;gap:14px;margin-bottom:30px;}
+  .section-num{font-family:var(--font-mono);font-size:13px;color:var(--accent);}
+  .section-head h2{font-family:var(--font-display);font-size:clamp(26px,3.4vw,36px);font-weight:600;margin:0;}
+  .section-head .rule{flex:1;height:1px;background:var(--line);}
+
+  /* ---------- PRICE / TICKET-STUB CARD ---------- */
+  .fare-card{
+    background:var(--accent-dark);
+    color:#fff;
+    border-radius:20px;
+    padding:36px;
+    position:relative;
+    overflow:hidden;
+    box-shadow:var(--card-shadow);
+  }
+  .fare-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:36px;}
+  @media(max-width:760px){.fare-grid{grid-template-columns:1fr;}}
+  .fare-lines{list-style:none;margin:0;padding:0;}
+  .fare-lines li{
+    display:flex;justify-content:space-between;gap:16px;
+    padding:12px 0;border-bottom:1px dashed rgba(255,255,255,.22);
+    font-size:14.5px;
+  }
+  .fare-lines li .lbl{color:rgba(255,255,255,.75);}
+  .fare-lines li .amt{font-family:var(--font-mono);font-weight:600;white-space:nowrap;}
+  .fare-total{
+    margin-top:18px;padding-top:18px;
+    border-top:2px solid var(--accent-warm);
+    display:flex;justify-content:space-between;align-items:baseline;
+  }
+  .fare-total .lbl{font-family:var(--font-display);font-size:18px;}
+  .fare-total .amt{font-family:var(--font-mono);font-size:24px;color:var(--accent-warm);font-weight:600;}
+  .incl-title{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.6);margin:0 0 12px;}
+  .incl-list{list-style:none;margin:0 0 22px;padding:0;}
+  .incl-list li{display:flex;gap:10px;padding:6px 0;font-size:14px;line-height:1.5;}
+  .incl-list li svg{flex:none;width:16px;height:16px;margin-top:3px;color:#7CE0C6;}
+  .excl-list li svg{color:rgba(255,255,255,.4);}
+
+  /* ---------- ITINERARY TIMELINE ---------- */
+  .day-group{margin-bottom:34px;}
+  .day-title{
+    display:flex;align-items:center;gap:10px;
+    font-family:var(--font-display);font-size:20px;font-weight:600;
+    color:var(--accent-dark);margin-bottom:18px;
+  }
+  .day-title .dot{width:10px;height:10px;border-radius:50%;background:var(--accent-warm);flex:none;}
+  .timeline{position:relative;padding-left:104px;}
+  .timeline::before{
+    content:"";position:absolute;left:85.5px;top:6px;bottom:6px;width:2px;
+    background:repeating-linear-gradient(var(--line),var(--line) 4px,transparent 4px,transparent 9px);
+  }
+  .tl-item{position:relative;padding-bottom:22px;}
+  .tl-item:last-child{padding-bottom:0;}
+  .tl-time{
+    position:absolute;left:-104px;top:-1px;width:68px;
+    display:block;text-align:right;
+    font-family:var(--font-mono);font-size:12.5px;font-weight:600;color:var(--accent);
+    white-space:nowrap;
+  }
+  .tl-item::after{
+    content:"";position:absolute;left:-24px;top:4px;width:9px;height:9px;border-radius:50%;
+    background:#fff;border:2px solid var(--accent);z-index:1;
+  }
+  .tl-text{font-size:14.5px;line-height:1.6;color:var(--ink);padding-top:0px;}
+
+  @media(max-width:520px){
+    .timeline{padding-left:0;}
+    .timeline::before{left:6.5px;}
+    .tl-item{padding-left:26px;padding-bottom:20px;}
+    .tl-item::after{left:2px;top:3px;}
+    .tl-time{position:static;display:block;width:auto;text-align:left;margin-bottom:4px;}
+  }
+
+  /* ---------- CARD GRID (hotels / food) ---------- */
+  .card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px;}
+  .info-card{
+    background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px;
+    transition:transform .3s ease, box-shadow .3s ease;
+  }
+  .info-card:hover{transform:translateY(-4px);box-shadow:var(--card-shadow);}
+  .info-card .tag{
+    display:inline-block;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--accent);background:var(--accent-soft);
+    padding:3px 9px;border-radius:20px;margin-bottom:12px;
+  }
+  .info-card h3{font-family:var(--font-display);font-size:18px;margin:0 0 8px;font-weight:600;}
+  .info-card p{font-size:13.5px;color:var(--ink-soft);line-height:1.55;margin:0;}
+  .info-card .warn{color:var(--accent-warm);font-size:12px;margin-top:8px;display:block;}
+
+  /* ---------- TWO COL ---------- */
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:22px;}
+  @media(max-width:760px){.two-col{grid-template-columns:1fr;}}
+  .panel{background:var(--tint);border-radius:16px;padding:26px;}
+  .panel h3{font-family:var(--font-display);font-size:19px;margin:0 0 14px;font-weight:600;}
+  .panel ul{margin:0;padding-left:0;list-style:none;}
+  .panel ul li{padding:7px 0;border-bottom:1px solid var(--line);font-size:13.8px;line-height:1.5;}
+  .panel ul li:last-child{border-bottom:none;}
+  .panel ul li b{color:var(--accent-dark);}
+
+  /* menu blocks */
+  .menu-day{margin-bottom:16px;}
+  .menu-day .mlabel{font-family:var(--font-mono);font-size:11px;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;}
+  .menu-day .mtime{font-weight:700;color:var(--accent-dark);}
+
+  /* reveal */
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease, transform .7s ease;}
+  .reveal.visible{opacity:1;transform:none;}
+
+  footer{
+    background:var(--accent-dark);color:rgba(255,255,255,.75);
+    padding:40px 0;text-align:center;font-size:13px;
+    transition:background 1s ease;
+  }
+  footer b{color:#fff;}
+  .tour-content{display:none;}
+  .tour-content.active{display:block;}
+
+  @media(max-width:560px){
+    .stat-strip{grid-template-columns:repeat(2,1fr);margin-top:-30px;}
+    .ticket{width:100%;max-width:320px;}
+  }
+  @media(max-width:400px){
+    .wrap{padding:0 18px;}
+    .hero h1{font-size:34px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="wrap hero-inner">
+    <div class="eyebrow">Team trip · Chọn 1 trong 2 hành trình</div>
+    <h1>Phú Quý <em>hay</em> Ninh Vân?</h1>
+    <p class="sub">Một bên là đảo xanh giữa biển khơi, một bên là làng chài ẩn mình sau rừng già. Chạm vào tấm vé bên dưới để xem chi tiết từng hành trình.</p>
+
+    <div class="ticket-picker">
+      <div class="ticket active" data-target="pq" onclick="selectTour('pq')">
+        <div class="perf"></div>
+        <div class="ticket-top">
+          <div>
+            <div class="ticket-route">SGN → Phan Thiết → Đảo</div>
+            <div class="ticket-name">Phú Quý</div>
+            <div class="ticket-days">3 ngày · 2 đêm</div>
+          </div>
+        </div>
+        <div class="ticket-stub">BOARDING</div>
+      </div>
+      <div class="ticket" data-target="nv" onclick="selectTour('nv')">
+        <div class="perf"></div>
+        <div class="ticket-top">
+          <div>
+            <div class="ticket-route">SGN → Nha Trang → Làng chài</div>
+            <div class="ticket-name">Ninh Vân</div>
+            <div class="ticket-days">2 ngày · 1 đêm</div>
+          </div>
+        </div>
+        <div class="ticket-stub">BOARDING</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wave-shim">
+    <svg viewBox="0 0 2400 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,50 C 200,90 400,10 600,50 C 800,90 1000,10 1200,50 C1400,90 1600,10 1800,50 C2000,90 2200,10 2400,50 L2400,100 L0,100 Z" fill="#FAF6EC"></path>
+    </svg>
+  </div>
+</div>
+
+<div class="wrap">
+  <!-- ============ PHU QUY CONTENT ============ -->
+  <div class="tour-content active" id="pq">
+
+    <div class="stat-strip reveal">
+      <div class="stat"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><div class="val">3N2Đ</div><div class="lbl">Thời lượng</div></div>
+      <div class="stat"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 11h18M7 7V5h10v2"/></svg><div class="val">1,95tr</div><div class="lbl">Combo / người</div></div>
+      <div class="stat"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 17l4-10h8l4 10"/><path d="M2 17h20"/></svg><div class="val">440k</div><div class="lbl">Xe SG-P.Thiết (khứ hồi)</div></div>
+      <div class="stat"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 18c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/><path d="M3 12c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/></svg><div class="val">Biển đảo</div><div class="lbl">Không khí</div></div>
+    </div>
+
+    <section class="block">
+      <div class="section-head reveal"><span class="section-num">01</span><h2>Vé & chi phí</h2><div class="rule"></div></div>
+      <div class="fare-card reveal">
+        <div class="fare-grid">
+          <div>
+            <p class="incl-title">Cấu trúc chi phí / người</p>
+            <ul class="fare-lines">
+              <li><span class="lbl">Xe Phương Trang SG–Phan Thiết (khứ hồi)</span><span class="amt">440.000đ</span></li>
+              <li><span class="lbl">Combo tour 3N2D (tàu cao tốc, xe máy, khách sạn, tour tặng)</span><span class="amt">1.950.000đ</span></li>
+              <li><span class="lbl">Ăn uống 3 ngày (tự túc, ước tính)</span><span class="amt">700k – 1.500k</span></li>
+            </ul>
+            <div class="fare-total"><span class="lbl">Tổng ước tính</span><span class="amt">~3,09 – 3,89 triệu</span></div>
+          </div>
+          <div>
+            <p class="incl-title">Combo đã bao gồm</p>
+            <ul class="incl-list">
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Vé tàu cao tốc khứ hồi Phan Thiết – Phú Quý</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Xe máy di chuyển trên đảo (2 người/xe)</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Phòng khách sạn trung tâm (được chọn)</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Tặng tour Hòn Tranh hoặc Chèo sup lặn ngắm san hô</li>
+            </ul>
+            <p class="incl-title">Chưa bao gồm</p>
+            <ul class="incl-list excl-list">
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>Ăn uống</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>Hướng dẫn viên địa phương</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block">
+      <div class="section-head reveal"><span class="section-num">02</span><h2>Lịch trình 3 ngày 2 đêm</h2><div class="rule"></div></div>
+
+      <div class="day-group reveal">
+        <div class="day-title"><span class="dot"></span>Ngày 1 — Ra đảo & hoàng hôn</div>
+        <div class="timeline">
+          <div class="tl-item"><span class="tl-time">7h00</span><div class="tl-text">Check-in lên tàu từ cảng Phan Thiết</div></div>
+          <div class="tl-item"><span class="tl-time">9h30</span><div class="tl-text">HDV đón khách tại cảng Phú Quý, nhận xe và về khách sạn check-in phòng</div></div>
+          <div class="tl-item"><span class="tl-time">11h00</span><div class="tl-text">Thưởng thức hải sản tại khu Làng Bè</div></div>
+          <div class="tl-item"><span class="tl-time">12h30</span><div class="tl-text">Về khách sạn nghỉ ngơi</div></div>
+          <div class="tl-item"><span class="tl-time">14h00</span><div class="tl-text">Check-in: Dốc Phượt, Cột Cờ, Gành Hang, Khe Sung Sướng, Hồ Vô Cực</div></div>
+          <div class="tl-item"><span class="tl-time">17h30</span><div class="tl-text">Tắm biển tại bãi Hải Đảo, ngắm hoàng hôn</div></div>
+          <div class="tl-item"><span class="tl-time">19h00</span><div class="tl-text">Đi ăn tối</div></div>
+        </div>
+      </div>
+
+      <div class="day-group reveal">
+        <div class="day-title"><span class="dot"></span>Ngày 2 — Biển & núi</div>
+        <div class="timeline">
+          <div class="tl-item"><span class="tl-time">7h00</span><div class="tl-text">Dùng điểm tâm sáng</div></div>
+          <div class="tl-item"><span class="tl-time">8h00</span><div class="tl-text">Tour Hòn Tranh hoặc Chèo Sup, lặn ngắm san hô</div></div>
+          <div class="tl-item"><span class="tl-time">11h00</span><div class="tl-text">Thưởng thức đặc sản Bò Nóng Phú Quý</div></div>
+          <div class="tl-item"><span class="tl-time">14h00</span><div class="tl-text">Check-in: Mộ Thầy, Núi Cao Cát, Đường Chỉ Nên</div></div>
+          <div class="tl-item"><span class="tl-time">17h30</span><div class="tl-text">Về lại khách sạn nghỉ ngơi</div></div>
+          <div class="tl-item"><span class="tl-time">19h00</span><div class="tl-text">Đi ăn tối</div></div>
+        </div>
+      </div>
+
+      <div class="day-group reveal">
+        <div class="day-title"><span class="dot"></span>Ngày 3 — Điểm cuối & về đất liền</div>
+        <div class="timeline">
+          <div class="tl-item"><span class="tl-time">7h00</span><div class="tl-text">Dùng điểm tâm sáng</div></div>
+          <div class="tl-item"><span class="tl-time">8h00</span><div class="tl-text">Check-in điểm còn lại: Cây Cô Đơn, Làng Chài, Bờ kè Phú Quý</div></div>
+          <div class="tl-item"><span class="tl-time">10h00</span><div class="tl-text">Check-out, di chuyển xuống cảng để về lại Phan Thiết</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block">
+      <div class="section-head reveal"><span class="section-num">03</span><h2>Khách sạn trung tâm</h2><div class="rule"></div></div>
+      <p class="reveal" style="font-size:14px;color:var(--ink-soft);margin:-14px 0 24px;">Tất cả khách sạn dưới đây đều có thể chọn — HDV sẽ kiểm tra tình trạng phòng trống trước khi xác nhận.</p>
+      <div class="card-grid reveal">
+        <div class="info-card">
+          <span class="tag">Tự chọn</span>
+          <h3>Hoàng Phú Sea View</h3>
+          <p>Phòng 1–2 giường đôi, có bản view thẳng biển hoặc sân vườn. Máy lạnh, TV, tủ lạnh mini, máy sấy tóc.</p>
+        </div>
+        <div class="info-card">
+          <span class="tag">Tự chọn</span>
+          <h3>Micasa Hotel</h3>
+          <p>19 Nguyễn Tri Phương, Xã Ngũ Phụng. Phòng đơn ban công, gần núi Cấm & Bãi Nhỏ – Gành Hang.</p>
+        </div>
+        <div class="info-card">
+          <span class="tag">Tự chọn</span>
+          <h3>Hải Long Hotel</h3>
+          <p>Lô 5 Trần Hưng Đạo, KDC Thị Trấn Tam Thanh. Khách sạn lớn, có thang máy, view biển & phố đi bộ.</p>
+        </div>
+        <div class="info-card">
+          <span class="tag">Tự chọn</span>
+          <h3>Lee VII Hotel</h3>
+          <p>Khu vực KDC Tam Thanh. Một số phòng view biển, lễ tân 24/24.</p>
+        </div>
+        <div class="info-card">
+          <span class="tag">Tự chọn</span>
+          <h3>Hoàng Yến Hotel</h3>
+          <p>Ban công riêng ở mọi phòng, view biển. Cách bãi biển vài bước chân, gần chợ và quán ăn địa phương.</p>
+        </div>
+        <div class="info-card">
+          <span class="tag">Tự chọn</span>
+          <h3>Bình Minh Hotel</h3>
+          <p>Lựa chọn khu trung tâm, thuận tiện di chuyển đến các điểm ăn uống và tham quan trên đảo.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="block">
+      <div class="section-head reveal"><span class="section-num">04</span><h2>Ăn uống & đặc sản</h2><div class="rule"></div></div>
+      <div class="two-col reveal">
+        <div class="panel">
+          <h3>🌅 Ăn sáng &amp; ăn tối</h3>
+          <ul>
+            <li><b>Chợ Tam Thanh</b> — đi trước 7h30 · 20-40k</li>
+            <li><b>Bánh căn Cô Phúc</b> · 20-40k</li>
+            <li><b>Thuận Phát</b> — bún bò, phở bò · 20-40k</li>
+            <li><b>Quán Lưới Sea Food, Lộc Phát</b> · 100-200k</li>
+            <li><b>Hải Thắm, Cột Buồm, Ông Già</b> · 100-200k</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>🦞 Đặc sản phải thử</h3>
+          <ul>
+            <li><b>Hải sản bè</b> Phú Quý Trips / Hồng Phát / Ánh Sáng · 200-400k</li>
+            <li><b>Bò nóng</b> Hòa Thướng (Tam Thanh) · 150-200k/người</li>
+            <li><b>Bò nóng</b> Chú Ninh, Ngọc Tình (Ngũ Phụng)</li>
+            <li><b>Trà sữa</b> 1995, 1992, The Best, Bình Minh · 20-50k</li>
+            <li><b>Xiên nướng</b> Lò Nướng BBQ, Khói, Box (Tam Thanh)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="block">
+      <div class="section-head reveal"><span class="section-num">05</span><h2>Bãi tắm tham khảo</h2><div class="rule"></div></div>
+      <div class="card-grid reveal">
+        <div class="info-card"><span class="tag">Hoàng hôn</span><h3>Bãi Hải Đảo</h3><p>Điểm tắm biển & ngắm hoàng hôn chính trong lịch trình ngày 1.</p></div>
+        <div class="info-card"><span class="tag">Nước trong</span><h3>Bãi Lạch Xanh</h3><p>Tùy mùa, nước xanh trong đặc trưng.</p></div>
+        <div class="info-card"><span class="tag">Yên tĩnh</span><h3>Bãi Nhỏ</h3><p>Bãi tắm nhỏ, ít người, gần khu Micasa.</p></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ NINH VAN CONTENT ============ -->
+  <div class="tour-content" id="nv">
+
+    <div class="stat-strip reveal">
+      <div class="stat"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><div class="val">2N1Đ</div><div class="lbl">Thời lượng</div></div>
+      <div class="stat"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 11h18M7 7V5h10v2"/></svg><div class="val">3,1tr</div><div class="lbl">Trọn gói / người</div></div>
+      <div class="stat"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 17l4-10h8l4 10"/><path d="M2 17h20"/></svg><div class="val">340k</div><div class="lbl">Xe SG-Nha Trang (1 chiều)</div></div>
+      <div class="stat"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg><div class="val">Rừng &amp; biển</div><div class="lbl">Không khí</div></div>
+    </div>
+
+    <section class="block">
+      <div class="section-head reveal"><span class="section-num">01</span><h2>Vé & chi phí</h2><div class="rule"></div></div>
+      <div class="fare-card reveal">
+        <div class="fare-grid">
+          <div>
+            <p class="incl-title">Cấu trúc chi phí / người</p>
+            <ul class="fare-lines">
+              <li><span class="lbl">Xe Phương Trang SG–Nha Trang (1 chiều đi)</span><span class="amt">340.000đ</span></li>
+              <li><span class="lbl">Trọn gói tour 2N1D (đã gồm vé về + 5 bữa ăn)</span><span class="amt">3.100.000đ</span></li>
+            </ul>
+            <div class="fare-total"><span class="lbl">Tổng ước tính</span><span class="amt">~3,44 triệu</span></div>
+          </div>
+          <div>
+            <p class="incl-title">Trọn gói đã bao gồm</p>
+            <ul class="incl-list">
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Homestay tại Ninh Vân</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>HDV & đội ngũ hậu cần hỗ trợ, bảo hiểm du lịch</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Phương tiện di chuyển + vé tham quan</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>5 bữa ăn chính trong tour</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Đèn pin, xe đạp tại Ninh Vân + vật dụng y tế</li>
+            </ul>
+            <p class="incl-title">Chưa bao gồm</p>
+            <ul class="incl-list excl-list">
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>Tip cho HDV & porter đoàn</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>Ăn uống, mua sắm ngoài chương trình</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block">
+      <div class="section-head reveal"><span class="section-num">02</span><h2>Lịch trình 2 ngày 1 đêm</h2><div class="rule"></div></div>
+
+      <div class="day-group reveal">
+        <div class="day-title"><span class="dot"></span>Ngày 1 — Suối rừng & BBQ biển</div>
+        <div class="timeline">
+          <div class="tl-item"><span class="tl-time">7h00</span><div class="tl-text">Đón đoàn, ăn sáng cà phê, di chuyển đi suối Trường Bơi</div></div>
+          <div class="tl-item"><span class="tl-time">9h00</span><div class="tl-text">Hiking dưới tán rừng mát rượi và tắm suối</div></div>
+          <div class="tl-item"><span class="tl-time">10h30</span><div class="tl-text">Ăn trưa tại suối</div></div>
+          <div class="tl-item"><span class="tl-time">13h00</span><div class="tl-text">Di chuyển đi Ninh Vân</div></div>
+          <div class="tl-item"><span class="tl-time">14h00</span><div class="tl-text">Nhận phòng, nghỉ ngơi, nhận xe đạp tại Ninh Vân</div></div>
+          <div class="tl-item"><span class="tl-time">16h00</span><div class="tl-text">Đạp xe khám phá cánh đồng tỏi, đậu, hành, bắp</div></div>
+          <div class="tl-item"><span class="tl-time">18h30</span><div class="tl-text">BBQ hải sản, chilling tại bãi biển</div></div>
+          <div class="tl-item"><span class="tl-time">20h30</span><div class="tl-text">Khám phá sinh vật biển ban đêm</div></div>
+        </div>
+      </div>
+
+      <div class="day-group reveal">
+        <div class="day-title"><span class="dot"></span>Ngày 2 — Bình minh & Gành Nhảy</div>
+        <div class="timeline">
+          <div class="tl-item"><span class="tl-time">4h30</span><div class="tl-text">Đạp xe ngắm bình minh, khám phá hải sản mới đánh bắt</div></div>
+          <div class="tl-item"><span class="tl-time">6h30</span><div class="tl-text">Ăn sáng, cà phê, trải nghiệm ẩm thực làng chài</div></div>
+          <div class="tl-item"><span class="tl-time">8h00</span><div class="tl-text">Tự do khám phá làng chài</div></div>
+          <div class="tl-item"><span class="tl-time">9h30</span><div class="tl-text">Di chuyển đi Gành Nhảy</div></div>
+          <div class="tl-item"><span class="tl-time">11h00</span><div class="tl-text">Ăn trưa tại Gành Nhảy kèm sản vật chợ làng chài</div></div>
+          <div class="tl-item"><span class="tl-time">14h00</span><div class="tl-text">Tắm biển, lặn ngắm san hô, chèo Kayak</div></div>
+          <div class="tl-item"><span class="tl-time">15h30</span><div class="tl-text">Check-in sống lưng khủng long Hòn Mỹ Giang</div></div>
+          <div class="tl-item"><span class="tl-time">17h30</span><div class="tl-text">Có mặt Nha Trang, kết thúc hành trình</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block">
+      <div class="section-head reveal"><span class="section-num">03</span><h2>Thực đơn trong tour</h2><div class="rule"></div></div>
+      <div class="two-col reveal">
+        <div class="panel">
+          <h3>Ngày 1</h3>
+          <div class="menu-day"><span class="mlabel">Sáng</span><p>Bún cá sứa hoặc bánh canh cua biển</p></div>
+          <div class="menu-day"><span class="mlabel">Trưa</span><p>Gà nướng, cơm lam, trái cây</p></div>
+          <div class="menu-day"><span class="mlabel">Tối — BBQ hải sản</span><p>Tôm nướng, mực lá nướng, ốc hấp, nhum nướng, lẩu cá nấu chua, salad rong nho, cơm trắng, trái cây tráng miệng, 2 phần nước</p></div>
+        </div>
+        <div class="panel">
+          <h3>Ngày 2</h3>
+          <div class="menu-day"><span class="mlabel">Sáng</span><p>Ăn uống tự chọn tại chợ Ninh Vân</p></div>
+          <div class="menu-day"><span class="mlabel">Trưa</span><p>Hải sản mua từ chợ sáng, ăn kèm cơm tại KDL Gành Nhảy</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block">
+      <div class="section-head reveal"><span class="section-num">04</span><h2>Chuẩn bị trước chuyến đi</h2><div class="rule"></div></div>
+      <div class="two-col reveal">
+        <div class="panel">
+          <h3>🎒 Vật dụng mang theo</h3>
+          <ul>
+            <li>Áo quần cá nhân 2 ngày: 1 bộ leo núi/tắm suối + 2 bộ dự phòng</li>
+            <li>Giày leo núi nhẹ, êm chân, thoát nước tốt</li>
+            <li>Thuốc chống côn trùng, thuốc cá nhân</li>
+            <li>Dép nhẹ, mũ nón, áo khoác giữ ấm</li>
+            <li>Khăn tắm, đồ vệ sinh cá nhân, sạc dự phòng</li>
+            <li>Giấy tờ tùy thân</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>📋 Lưu ý từ tour</h3>
+          <ul>
+            <li>Khuyến khích mang vật dụng tái sử dụng (bình nước, áo mưa...)</li>
+            <li>Không xả rác, giữ gìn thiên nhiên</li>
+            <li>Tôn trọng văn hóa, bản sắc người bản địa</li>
+            <li>Tuân thủ hướng dẫn an toàn của Guide</li>
+            <li>Hành trình có thể thay đổi tùy sức khỏe đoàn & thời tiết</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    Danh sách vote &amp; theo dõi ai chọn tour nào — xem tại <a href="https://box.tma.com.vn/index.php/apps/richdocuments/documents.php/public?fileId=&shareToken=COkI5l8chTyKUh8" target="_blank" rel="noopener" style="color:#fff;text-decoration:underline;text-underline-offset:3px;"><b>file Excel tổng hợp</b></a> đã gửi trong nhóm.
+  </div>
+</footer>
+
+<script>
+  function selectTour(id){
+    document.documentElement.setAttribute('data-theme', id);
+    document.querySelectorAll('.ticket').forEach(t => t.classList.toggle('active', t.dataset.target === id));
+    document.querySelectorAll('.tour-content').forEach(c => c.classList.toggle('active', c.id === id));
+    window.scrollTo({top: document.querySelector('.wave-shim').getBoundingClientRect().bottom + window.scrollY - 40, behavior:'smooth'});
+  }
+
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); } });
+  }, {threshold:0.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
