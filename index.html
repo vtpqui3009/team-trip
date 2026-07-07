@@ -173,6 +173,7 @@
     transition:filter .2s ease;
   }
   .rsvp-btn:hover{filter:brightness(1.08);}
+  .rsvp-btn.disabled{background:var(--ink-soft);pointer-events:none;cursor:not-allowed;filter:none;}
 
   /* wave divider */
   .wave-shim{position:relative;height:70px;margin-top:-2px;}
@@ -358,6 +359,7 @@
     letter-spacing:.02em;line-height:1.5;
   }
   .deadline-banner b{text-decoration:underline;text-underline-offset:2px;}
+  .deadline-banner.closed{background:var(--ink-soft);}
 
   /* back to top */
   .back-to-top{
@@ -388,7 +390,7 @@
 </head>
 <body>
 
-<div class="deadline-banner">⏰ Hạn chót chọn tour: hết Chủ Nhật <b>12/7/2026</b> — chọn tour & gửi lựa chọn trước thời hạn này nhé!</div>
+<div id="deadlineBanner" class="deadline-banner">⏰ Hạn chót chọn tour: hết Chủ Nhật <b>12/7/2026</b> — chọn tour & gửi lựa chọn trước thời hạn này nhé!</div>
 
 <div class="hero">
   <div class="wrap hero-inner">
@@ -737,6 +739,8 @@
 
 <script>
   const TOUR_LABELS = {pq:'Phú Quý (3N2D)', nv:'Ninh Vân (2N1D)'};
+  const RSVP_DEADLINE = new Date(2026, 6, 13, 0, 0, 0); // hết ngày Chủ Nhật 12/7/2026 (giờ local)
+  const isPastDeadline = () => new Date() >= RSVP_DEADLINE;
 
   function selectTour(id){
     document.documentElement.setAttribute('data-theme', id);
@@ -746,9 +750,25 @@
 
     const label = TOUR_LABELS[id];
     document.getElementById('rsvpTourName').textContent = label;
-    document.getElementById('rsvpBtn').href =
-      'https://docs.google.com/forms/d/e/1FAIpQLSf43l1CVpG8NI8BvL8-HJcOiGDjo8ykF1_kyIgaBeCR195Ghg/viewform?usp=pp_url&entry.398269876=' + encodeURIComponent(label);
+    if(!isPastDeadline()){
+      document.getElementById('rsvpBtn').href =
+        'https://docs.google.com/forms/d/e/1FAIpQLSf43l1CVpG8NI8BvL8-HJcOiGDjo8ykF1_kyIgaBeCR195Ghg/viewform?usp=pp_url&entry.398269876=' + encodeURIComponent(label);
+    }
   }
+
+  function applyDeadlineState(){
+    if(!isPastDeadline()) return;
+    const btn = document.getElementById('rsvpBtn');
+    btn.removeAttribute('href');
+    btn.classList.add('disabled');
+    btn.setAttribute('aria-disabled', 'true');
+    btn.textContent = 'Đã hết hạn chọn tour';
+
+    const banner = document.getElementById('deadlineBanner');
+    banner.classList.add('closed');
+    banner.innerHTML = '🔒 Đã hết hạn chọn tour (hết ngày <b>12/7/2026</b>) — liên hệ trưởng nhóm nếu cần thay đổi.';
+  }
+  applyDeadlineState();
 
   const io = new IntersectionObserver((entries)=>{
     entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); } });
