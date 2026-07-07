@@ -350,6 +350,15 @@
   .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease, transform .7s ease;}
   .reveal.visible{opacity:1;transform:none;}
 
+  /* deadline banner */
+  .deadline-banner{
+    background:var(--accent-warm);color:#fff;
+    text-align:center;padding:11px 20px;
+    font-family:var(--font-mono);font-size:13px;font-weight:600;
+    letter-spacing:.02em;line-height:1.5;
+  }
+  .deadline-banner b{text-decoration:underline;text-underline-offset:2px;}
+
   /* back to top */
   .back-to-top{
     position:fixed;right:24px;bottom:24px;z-index:50;
@@ -378,6 +387,8 @@
 </style>
 </head>
 <body>
+
+<div class="deadline-banner">⏰ Hạn chót chọn tour: hết Chủ Nhật <b>12/7/2026</b> — chọn tour & gửi lựa chọn trước thời hạn này nhé!</div>
 
 <div class="hero">
   <div class="wrap hero-inner">
